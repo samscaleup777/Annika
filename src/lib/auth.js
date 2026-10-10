@@ -2,7 +2,13 @@ import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 
-const client = new MongoClient(process.env.MONGODB_URL);
+// Vercel has MONGODB_URI configured; keep compatibility with MONGODB_URL.
+const mongoUrl = process.env.MONGODB_URL || process.env.MONGODB_URI;
+if (!mongoUrl) {
+  throw new Error("Missing MongoDB connection string. Set MONGODB_URI in Vercel Environment Variables.");
+}
+
+const client = new MongoClient(mongoUrl);
 const db = client.db("my-7-assigment");
 
 export const auth = betterAuth({

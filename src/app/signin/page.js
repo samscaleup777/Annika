@@ -31,6 +31,10 @@ export default function SignInPage() {
       toast.error("ইমেইল ও পাসওয়ার্ড দিন।");
       return;
     }
+    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizedEmail)) {
+      toast.error("একটি সঠিক ইমেইল ঠিকানা দিন।");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -107,7 +111,7 @@ export default function SignInPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
               <label htmlFor="signin-email" className="block text-sm font-medium text-slate-700 mb-1.5">ইমেইল</label>
               <input

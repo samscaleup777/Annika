@@ -33,6 +33,10 @@ export default function SignUpPage() {
       toast.error("সব ঘর পূরণ করুন।");
       return;
     }
+    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizedEmail)) {
+      toast.error("একটি সঠিক ইমেইল ঠিকানা দিন।");
+      return;
+    }
     if (password.length < 8) {
       toast.error("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
       return;
@@ -114,7 +118,7 @@ export default function SignUpPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
               <label htmlFor="signup-name" className="block text-sm font-medium text-slate-700 mb-1.5">নাম</label>
               <input

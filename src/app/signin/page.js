@@ -82,8 +82,9 @@ export default function SignInPage() {
 
       const result = await authClient.signIn.social({
         provider,
-        callbackURL: "/",
-        errorCallbackURL: "/signin",
+        callbackURL: "/?auth=login",
+        newUserCallbackURL: "/?auth=registered",
+        errorCallbackURL: "/signin?auth=error",
       });
 
       if (result?.error) {

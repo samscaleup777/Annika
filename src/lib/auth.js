@@ -17,7 +17,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   socialProviders.github = {
     clientId: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    requireEmailVerification: true,
+    requireEmailVerification: Boolean(process.env.RESEND_API_KEY && process.env.AUTH_FROM_EMAIL),
   };
 }
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
@@ -42,7 +42,9 @@ export const auth = betterAuth({
     requireEmailVerification: true,
   },
   emailVerification: {
-    sendOnSignUp: true,
+    // Only require verification when a real email delivery provider is configured.
+    // This prevents sign-up from creating an account and then failing at email delivery.
+    sendOnSignUp: Boolean(process.env.RESEND_API_KEY && process.env.AUTH_FROM_EMAIL),
     autoSignInAfterVerification: false,
     sendVerificationEmail: async ({ user, url }) => {
       const apiKey = process.env.RESEND_API_KEY;

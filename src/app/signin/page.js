@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -21,6 +21,13 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState("");
   const [verificationNeeded, setVerificationNeeded] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("verification") === "pending") {
+      toast("আপনার ইমেইলে পাঠানো verification link খুলে অ্যাকাউন্ট verify করুন।");
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -145,7 +152,7 @@ export default function SignInPage() {
               {socialLoading === "github" ? "Connecting..." : "GitHub"}
             </button>
           </div>
-          <p className="text-center text-sm text-slate-600 mt-5">অ্যাকাউন্ট নেই? <Link href={`/signup?redirect=${encodeURIComponent(typeof window === "undefined" ? "/" : getReturnPath())}`} className="text-green-600 hover:underline font-medium">সাইন আপ করুন</Link></p>
+          <p className="text-center text-sm text-slate-600 mt-5">অ্যাকাউন্ট নেই? <Link href="/signup" onClick={(event) => { event.preventDefault(); router.push(`/signup?redirect=${encodeURIComponent(getReturnPath())}`); }} className="text-green-600 hover:underline font-medium">সাইন আপ করুন</Link></p>
         </div>
         <p className="text-center text-sm text-slate-500 mt-5"><Link href="/" className="hover:text-green-600">← হোম পেজে ফিরে যান</Link></p>
       </div>

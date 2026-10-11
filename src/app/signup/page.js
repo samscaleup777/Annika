@@ -29,13 +29,27 @@ export default function SignUpPage() {
 
     setLoading(true);
     try {
+      const configResponse = await fetch("/api/auth/providers", { cache: "no-store" });
+      const config = configResponse.ok ? await configResponse.json() : null;
+      if (!config?.databaseConfigured || !config?.secretConfigured) {
+        toast.error("অ্যাকাউন্ট তৈরি করা যাচ্ছে না। Vercel-এ MONGODB_URI ও BETTER_AUTH_SECRET সেট করতে হবে।");
+        return;
+      }
+      const verificationConfigured = Boolean(config.emailVerificationConfigured);
+
       const result = await authClient.signUp.email({ name: trimmedName, email: normalizedEmail, password, callbackURL: getReturnPath() });
       if (result?.error) {
         toast.error(result.error.message || "রেজিস্ট্রেশন ব্যর্থ হয়েছে");
         return;
       }
-      toast.success("অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল থেকে verification link খুলে অ্যাকাউন্ট verify করুন।");
-      router.push(`/signin?redirect=${encodeURIComponent(getReturnPath())}&verification=pending`);
+      if (verificationConfigured) {
+        toast.success("অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল থেকে verification link খুলে অ্যাকাউন্ট verify করুন।");
+        router.push(`/signin?redirect=${encodeURIComponent(getReturnPath())}&verification=pending`);
+      } else {
+        toast.success("অ্যাকাউন্ট তৈরি হয়েছে। আপনি এখন সাইন ইন করতে পারবেন।");
+        router.push(getReturnPath());
+      }
+      router.refresh();
     } catch (error) {
       console.error("Sign-up failed:", error);
       toast.error("রেজিস্ট্রেশন করা যায়নি। Email verification service-এর configuration পরীক্ষা করুন।");

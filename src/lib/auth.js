@@ -39,39 +39,8 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: Boolean(process.env.RESEND_API_KEY && process.env.AUTH_FROM_EMAIL),
-  },
-  emailVerification: {
-    // Only require verification when a real email delivery provider is configured.
-    // This prevents sign-up from creating an account and then failing at email delivery.
-    sendOnSignUp: Boolean(process.env.RESEND_API_KEY && process.env.AUTH_FROM_EMAIL),
-    autoSignInAfterVerification: false,
-    sendVerificationEmail: async ({ user, url }) => {
-      const apiKey = process.env.RESEND_API_KEY;
-      const from = process.env.AUTH_FROM_EMAIL;
-      if (!apiKey || !from) {
-        throw new Error("Email verification requires RESEND_API_KEY and AUTH_FROM_EMAIL in Vercel.");
-      }
-
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from,
-          to: [user.email],
-          subject: "Verify your Bazar Dor account",
-          text: `Please verify your email address by opening this link: ${url}`,
-          html: `<p>Thanks for creating a Bazar Dor account.</p><p><a href="${url}">Verify your email address</a></p><p>If you did not create this account, you can ignore this email.</p>`,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Verification email delivery failed with status ${response.status}.`);
-      }
-    },
+    // The assignment explicitly requires no email verification.
+    requireEmailVerification: false,
   },
   database: mongodbAdapter(db, { client }),
   socialProviders,

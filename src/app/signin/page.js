@@ -94,6 +94,19 @@ export default function SignInPage() {
   const socialSignIn = async (provider) => {
     setSocialLoading(provider);
     try {
+      const configResponse = await fetch("/api/auth/providers", { cache: "no-store" });
+      const config = configResponse.ok ? await configResponse.json() : null;
+      if (!config?.databaseConfigured || !config?.secretConfigured) {
+        toast.error("Authentication backend সম্পূর্ণ configure করা নেই। Vercel-এ MONGODB_URI ও BETTER_AUTH_SECRET সেট করতে হবে।");
+        setSocialLoading("");
+        return;
+      }
+      if (!config?.[provider]?.configured) {
+        const vars = provider === "google" ? "GOOGLE_CLIENT_ID ও GOOGLE_CLIENT_SECRET" : "GITHUB_CLIENT_ID ও GITHUB_CLIENT_SECRET";
+        toast.error(`${provider === "google" ? "Google" : "GitHub"} sign-in চালু করতে Vercel Environment Variables-এ ${vars} যোগ করুন।`);
+        setSocialLoading("");
+        return;
+      }
       const destination = getReturnPath();
       const result = await authClient.signIn.social({
         provider,
@@ -101,7 +114,7 @@ export default function SignInPage() {
         errorCallbackURL: `/signin?redirect=${encodeURIComponent(destination)}`,
       });
       if (result?.error) {
-        toast.error(result.error.message || `${provider} sign-in কনফিগার করা নেই`);
+        toast.error(/provider not found/i.test(result.error.message || "") ? `${provider === "google" ? "Google" : "GitHub"} OAuth credentials configure করা নেই।` : (result.error.message || `${provider} sign-in ব্যর্থ হয়েছে`));
         setSocialLoading("");
       }
     } catch (error) {

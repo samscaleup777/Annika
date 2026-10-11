@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
@@ -11,6 +11,7 @@ import { todayBn } from "@/lib/bn";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const [categories, setCategories] = useState([]);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -22,6 +23,24 @@ export default function Navbar() {
   useEffect(() => {
     getAllCategories().then((data) => setCategories(data));
   }, []);
+
+  useEffect(() => {
+    const authResult = searchParams.get("auth");
+    if (!authResult) return;
+
+    if (authResult === "login") {
+      toast.success("লগইন সফল হয়েছে!");
+    } else if (authResult === "registered") {
+      toast.success("সোশ্যাল অ্যাকাউন্ট দিয়ে নিবন্ধন সফল হয়েছে!");
+    } else if (authResult === "error") {
+      toast.error("সোশ্যাল লগইন সম্পন্ন হয়নি। আবার চেষ্টা করুন।");
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("auth");
+    const remainingQuery = params.toString();
+    router.replace(remainingQuery ? `${pathname}?${remainingQuery}` : pathname, { scroll: false });
+  }, [pathname, router, searchParams]);
 
   useEffect(() => {
     const handleClick = () => setProfileOpen(false);

@@ -28,12 +28,12 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 }
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || "https://annika-882v.vercel.app",
+  baseURL: process.env.BETTER_AUTH_URL || "https://annika-hk777.vercel.app",
   trustedOrigins: [
-    "https://annika-882v.vercel.app",
-    "https://annika-882v-hk777.vercel.app",
-    "https://annika-882v-git-main-hk777.vercel.app",
-    "https://annika-882v-*.vercel.app",
+    "https://annika-hk777.vercel.app",
+    "https://annika-three.vercel.app",
+    "https://annika-git-main-hk777.vercel.app",
+    "https://annika-*.vercel.app",
   ],
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {

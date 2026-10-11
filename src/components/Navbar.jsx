@@ -53,6 +53,7 @@ export default function Navbar() {
   const handleSignOut = async () => {
     if (signingOut) return;
     setSigningOut(true);
+    let errorToastShown = false;
     try {
       const result = await authClient.signOut({
         fetchOptions: {
@@ -63,16 +64,19 @@ export default function Navbar() {
             router.refresh();
           },
           onError: (ctx) => {
+            errorToastShown = true;
             toast.error(ctx.error.message || "সাইন আউট ব্যর্থ হয়েছে");
           },
         },
       });
-      if (result?.error) {
+      if (result?.error && !errorToastShown) {
         toast.error(result.error.message || "সাইন আউট ব্যর্থ হয়েছে");
       }
     } catch (error) {
       console.error("Sign-out failed:", error);
-      toast.error(error?.message || "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
+      if (!errorToastShown) {
+        toast.error(error?.message || "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
+      }
     } finally {
       setSigningOut(false);
     }

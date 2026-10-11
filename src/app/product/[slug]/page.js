@@ -14,7 +14,7 @@ export default async function ProductDetailPage({ params }) {
   });
 
   if (!session) {
-    redirect("/signin");
+    redirect(`/signin?redirect=${encodeURIComponent(`/product/${slug}`)}`);
   }
 
   return (

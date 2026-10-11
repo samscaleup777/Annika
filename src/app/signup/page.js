@@ -131,7 +131,7 @@ export default function SignUpPage() {
             </button>
           </div>
           <p className="text-center text-sm text-slate-600 mt-5">ইতিমধ্যে অ্যাকাউন্ট আছে? <Link href="/signin" onClick={(event) => { event.preventDefault(); router.push(`/signin?redirect=${encodeURIComponent(getReturnPath())}`); }} className="text-green-600 hover:underline font-medium">সাইন ইন করুন</Link></p>
-          <p className="text-xs text-slate-500 text-center mt-4">ইমেইল দিয়ে নিবন্ধনের পর আপনার ইমেইল ঠিকানা ভেরিফাই করতে হবে।</p>
+          <p className="text-xs text-slate-500 text-center mt-4">সঠিক ইমেইল ঠিকানা ব্যবহার করুন, যাতে প্রয়োজনে অ্যাকাউন্ট পুনরুদ্ধার করা যায়।</p>
         </div>
         <p className="text-center text-sm text-slate-500 mt-5"><Link href="/" className="hover:text-green-600">← হোম পেজে ফিরে যান</Link></p>
       </div>

@@ -39,6 +39,13 @@ export default function SignInPage() {
 
     setLoading(true);
     try {
+      const configResponse = await fetch("/api/auth/providers", { cache: "no-store" });
+      const config = configResponse.ok ? await configResponse.json() : null;
+      if (!config?.databaseConfigured || !config?.secretConfigured) {
+        toast.error("সাইন ইন সার্ভার এখনো প্রস্তুত নয়। Vercel-এ MONGODB_URI ও BETTER_AUTH_SECRET সেট করতে হবে।");
+        return;
+      }
+
       const result = await authClient.signIn.email({
         email: normalizedEmail,
         password,

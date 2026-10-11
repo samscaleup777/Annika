@@ -2,13 +2,15 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatBn, translateUnit } from "@/lib/bn";
-import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function ProductDetailPage({ params }) {
   const { slug } = await params;
 
+  // Load the auth service only when a request reaches this page. This keeps
+  // production builds independent of deployment-only secrets and database URLs.
+  const { auth } = await import("@/lib/auth");
   const session = await auth.api.getSession({
     headers: await headers(),
   });

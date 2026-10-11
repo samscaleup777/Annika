@@ -39,8 +39,9 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
-    // The assignment explicitly requires no email verification.
+    // Match the assignment: no email verification and no automatic sign-in after registration.
     requireEmailVerification: false,
+    autoSignIn: false,
   },
   database: mongodbAdapter(db, { client }),
   socialProviders,

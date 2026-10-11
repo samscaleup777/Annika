@@ -2,7 +2,8 @@ import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 
-// Vercel has MONGODB_URI configured; keep compatibility with MONGODB_URL.
+// OAuth is enabled only when the matching provider credentials are present in Vercel.
+// Keep compatibility with both supported MongoDB connection-string names.
 const mongoUrl = process.env.MONGODB_URL || process.env.MONGODB_URI;
 if (!mongoUrl) {
   throw new Error("Missing MongoDB connection string. Set MONGODB_URI in Vercel Environment Variables.");

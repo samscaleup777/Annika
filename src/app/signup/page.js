@@ -29,7 +29,7 @@ export default function SignUpPage() {
 
     setLoading(true);
     try {
-      const result = await authClient.signUp.email({ name: trimmedName, email: normalizedEmail, password });
+      const result = await authClient.signUp.email({ name: trimmedName, email: normalizedEmail, password, callbackURL: getReturnPath() });
       if (result?.error) {
         toast.error(result.error.message || "রেজিস্ট্রেশন ব্যর্থ হয়েছে");
         return;
@@ -103,7 +103,7 @@ export default function SignUpPage() {
               {socialLoading === "github" ? "Connecting..." : "GitHub"}
             </button>
           </div>
-          <p className="text-center text-sm text-slate-600 mt-5">ইতিমধ্যে অ্যাকাউন্ট আছে? <Link href="/signin" className="text-green-600 hover:underline font-medium">সাইন ইন করুন</Link></p>
+          <p className="text-center text-sm text-slate-600 mt-5">ইতিমধ্যে অ্যাকাউন্ট আছে? <Link href="/signin" onClick={(event) => { event.preventDefault(); router.push(`/signin?redirect=${encodeURIComponent(getReturnPath())}`); }} className="text-green-600 hover:underline font-medium">সাইন ইন করুন</Link></p>
           <p className="text-xs text-slate-500 text-center mt-4">ইমেইল দিয়ে নিবন্ধনের পর আপনার ইমেইল ঠিকানা ভেরিফাই করতে হবে।</p>
         </div>
         <p className="text-center text-sm text-slate-500 mt-5"><Link href="/" className="hover:text-green-600">← হোম পেজে ফিরে যান</Link></p>

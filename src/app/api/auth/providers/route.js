@@ -7,12 +7,15 @@ export async function GET() {
   const githubConfigured = Boolean(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET);
   const emailVerificationConfigured = Boolean(process.env.RESEND_API_KEY && process.env.AUTH_FROM_EMAIL);
 
-  const missing = [];
-  if (!databaseConfigured) missing.push("MONGODB_URI");
-  if (!secretConfigured) missing.push("BETTER_AUTH_SECRET");
-  if (!googleConfigured) missing.push("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET");
-  if (!githubConfigured) missing.push("GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET");
-  if (!emailVerificationConfigured) missing.push("RESEND_API_KEY", "AUTH_FROM_EMAIL");
+  const missingRequired = [];
+  const missingOAuthCredentials = [];
+  const optional = [];
+
+  if (!databaseConfigured) missingRequired.push("MONGODB_URI");
+  if (!secretConfigured) missingRequired.push("BETTER_AUTH_SECRET");
+  if (!googleConfigured) missingOAuthCredentials.push("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET");
+  if (!githubConfigured) missingOAuthCredentials.push("GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET");
+  if (!emailVerificationConfigured) optional.push("RESEND_API_KEY", "AUTH_FROM_EMAIL");
 
   return Response.json({
     databaseConfigured,
@@ -20,7 +23,9 @@ export async function GET() {
     emailVerificationConfigured,
     google: { configured: googleConfigured },
     github: { configured: githubConfigured },
-    missing,
+    missingRequired,
+    missingOAuthCredentials,
+    optional,
   }, {
     headers: { "Cache-Control": "no-store" },
   });

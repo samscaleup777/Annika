@@ -14,6 +14,7 @@ export default function Navbar() {
   const router = useRouter();
   const [categories, setCategories] = useState([]);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
@@ -31,18 +32,31 @@ export default function Navbar() {
   }, [profileOpen]);
 
   const handleSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          toast.success("সাইন আউট সফল হয়েছে");
-          router.push("/");
-          router.refresh();
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      const result = await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success("সাইন আউট সফল হয়েছে");
+            setProfileOpen(false);
+            router.push("/");
+            router.refresh();
+          },
+          onError: (ctx) => {
+            toast.error(ctx.error.message || "সাইন আউট ব্যর্থ হয়েছে");
+          },
         },
-        onError: (ctx) => {
-          toast.error(ctx.error.message || "সাইন আউট ব্যর্থ");
-        },
-      },
-    });
+      });
+      if (result?.error) {
+        toast.error(result.error.message || "সাইন আউট ব্যর্থ হয়েছে");
+      }
+    } catch (error) {
+      console.error("Sign-out failed:", error);
+      toast.error(error?.message || "সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
+    } finally {
+      setSigningOut(false);
+    }
   };
 
   return (
@@ -110,9 +124,10 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={handleSignOut}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 text-sm text-red-600"
+                  disabled={signingOut}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-50 text-sm text-red-600 disabled:opacity-60"
                 >
-                  ↩ সাইন আউট
+                  ↩ {signingOut ? "সাইন আউট হচ্ছে..." : "সাইন আউট"}
                 </button>
               </div>
             )}

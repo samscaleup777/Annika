@@ -2,22 +2,29 @@
 
 import { useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
+import { useLiveProducts } from "@/components/LiveProductsProvider";
 import { formatBn } from "@/lib/bn";
 
 export default function CategoryListing({ category, products }) {
   const [sort, setSort] = useState("default");
+  const liveProducts = useLiveProducts();
+
+  const activeProducts = useMemo(() => {
+    if (liveProducts.length === 0) return products;
+    return liveProducts.filter((product) => product.category === category.slug);
+  }, [liveProducts, products, category.slug]);
 
   const sortedProducts = useMemo(() => {
-    const list = [...products];
+    const list = [...activeProducts];
     if (sort === "price-asc") {
       list.sort((a, b) => (Number(a.today) || 0) - (Number(b.today) || 0));
     } else if (sort === "price-desc") {
       list.sort((a, b) => (Number(b.today) || 0) - (Number(a.today) || 0));
     }
     return list;
-  }, [products, sort]);
+  }, [activeProducts, sort]);
 
-  if (!products.length) {
+  if (!activeProducts.length) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center py-10">
         <div className="w-full max-w-xl bg-white border border-dashed border-slate-300 rounded-2xl p-8 sm:p-12 text-center">

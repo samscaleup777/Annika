@@ -4,11 +4,33 @@ import { useEffect, useState } from "react";
 import { getAllProducts } from "@/lib/api";
 import { formatBn, translateUnit } from "@/lib/bn";
 
+const REFRESH_INTERVAL_MS = 60_000;
+
 export default function Ticker() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    getAllProducts().then((data) => setProducts(data));
+    let active = true;
+
+    const refreshProducts = async () => {
+      try {
+        const data = await getAllProducts();
+        // Keep the last successful data if the API temporarily fails.
+        if (active && Array.isArray(data) && data.length > 0) {
+          setProducts(data);
+        }
+      } catch (error) {
+        console.warn("BazarDor ticker refresh failed:", error);
+      }
+    };
+
+    refreshProducts();
+    const intervalId = window.setInterval(refreshProducts, REFRESH_INTERVAL_MS);
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
   }, []);
 
   if (products.length === 0) {
@@ -22,7 +44,7 @@ export default function Ticker() {
     <div className="bg-slate-50 border-b border-slate-200 overflow-hidden">
       <div className="animate-marquee py-2">
         {items.map((p, idx) => (
-          <TickerItem key={`${p.id}-${idx}`} product={p} />
+          <TickerItem key={String(p.id) + "-" + idx} product={p} />
         ))}
       </div>
     </div>
@@ -50,7 +72,7 @@ function TickerItem({ product }) {
         {formatBn(product.today)} টাকা/
         {translateUnit(product.unit).replace("প্রতি ", "")}
       </span>
-      <span className={`${colorClass} font-medium`}>
+      <span className={colorClass + " font-medium"}>
         {arrow} {formatBn(Math.abs(pct).toFixed(1))}%
       </span>
     </div>

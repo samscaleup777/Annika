@@ -16,12 +16,20 @@ export default function Navbar() {
   const [categories, setCategories] = useState([]);
   const [profileOpen, setProfileOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [currentDate, setCurrentDate] = useState("");
 
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
 
   useEffect(() => {
     getAllCategories().then((data) => setCategories(data));
+  }, []);
+
+  useEffect(() => {
+    const updateDate = () => setCurrentDate(todayBn());
+    updateDate();
+    const intervalId = window.setInterval(updateDate, 60_000);
+    return () => window.clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
@@ -100,7 +108,7 @@ export default function Navbar() {
           </div>
           <div className="leading-tight">
             <div className="text-lg font-bold text-slate-800">বাজার দর</div>
-            <div className="text-xs text-slate-500">{todayBn()}</div>
+            <div className="text-xs text-slate-500">{currentDate || "\u00A0"}</div>
           </div>
         </Link>
 

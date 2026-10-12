@@ -1,5 +1,5 @@
 import Hero from "@/components/Hero";
-import ProductCard from "@/components/ProductCard";
+import LiveProductGrid from "@/components/LiveProductGrid";
 import { SectionSkeleton } from "@/components/Skeleton";
 import { Suspense } from "react";
 import {
@@ -43,11 +43,12 @@ async function RisersSection() {
       title="আজ দাম বেড়েছে ▲"
       subtitle="সর্বোচ্চ দাম বৃদ্ধি পাওয়া পণ্যগুলো"
     >
-      {products.length === 0 ? (
-        <EmptyState message="এই মুহূর্তে কোনো পণ্যের দাম বাড়েনি।" />
-      ) : (
-        <ProductGrid products={products} />
-      )}
+      <LiveProductGrid
+        products={products}
+        mode="risers"
+        limit={6}
+        emptyMessage="এই মুহূর্তে কোনো পণ্যের দাম বাড়েনি।"
+      />
     </SectionWrapper>
   );
 }
@@ -63,11 +64,12 @@ async function FallersSection() {
       title="আজ দাম কমেছে ▼"
       subtitle="সর্বোচ্চ দাম কমা পণ্যগুলো"
     >
-      {products.length === 0 ? (
-        <EmptyState message="এই মুহূর্তে কোনো পণ্যের দাম কমেনি।" />
-      ) : (
-        <ProductGrid products={products} />
-      )}
+      <LiveProductGrid
+        products={products}
+        mode="fallers"
+        limit={6}
+        emptyMessage="এই মুহূর্তে কোনো পণ্যের দাম কমেনি।"
+      />
     </SectionWrapper>
   );
 }
@@ -84,11 +86,11 @@ async function AllProductsSection() {
       title="সব পণ্য"
       subtitle={`মোট ${formatBn(products.length)}টি পণ্য দেখানো হচ্ছে`}
     >
-      {products.length === 0 ? (
-        <EmptyState message="এখন কোনো পণ্যের তথ্য পাওয়া যাচ্ছে না।" />
-      ) : (
-        <ProductGrid products={products} />
-      )}
+      <LiveProductGrid
+        products={products}
+        mode="all"
+        emptyMessage="এখন কোনো পণ্যের তথ্য পাওয়া যাচ্ছে না।"
+      />
     </SectionWrapper>
   );
 }
@@ -109,24 +111,5 @@ function SectionWrapper({ title, subtitle, children, id, skeleton }) {
       </div>
       {skeleton ? <SectionSkeleton /> : children}
     </section>
-  );
-}
-
-function ProductGrid({ products }) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {products.map((p) => (
-        <ProductCard key={p.id} product={p} />
-      ))}
-    </div>
-  );
-}
-
-function EmptyState({ message }) {
-  return (
-    <div className="bg-white border border-dashed border-slate-300 rounded-xl p-8 text-center text-slate-500">
-      <div className="text-4xl mb-2">📭</div>
-      <p>{message}</p>
-    </div>
   );
 }

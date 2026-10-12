@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Ticker from "@/components/Ticker";
 import Footer from "@/components/Footer";
+import LiveProductsProvider from "@/components/LiveProductsProvider";
 import { Toaster } from "react-hot-toast";
 
 const notoBengali = Noto_Sans_Bengali({
@@ -26,10 +27,12 @@ export default function RootLayout({ children }) {
         <Suspense fallback={<div className="h-28 bg-white border-b border-slate-200" aria-hidden="true" />}>
           <Navbar />
         </Suspense>
-        <Ticker />
-        <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
-          {children}
-        </main>
+        <LiveProductsProvider>
+          <Ticker />
+          <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+            {children}
+          </main>
+        </LiveProductsProvider>
         <Footer />
         <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
       </body>

@@ -31,7 +31,7 @@ export default function SignInPage() {
       toast.error("ইমেইল ও পাসওয়ার্ড দিন।");
       return;
     }
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizedEmail)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       toast.error("একটি সঠিক ইমেইল ঠিকানা দিন।");
       return;
     }

@@ -33,7 +33,7 @@ export default function SignUpPage() {
       toast.error("সব ঘর পূরণ করুন।");
       return;
     }
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizedEmail)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       toast.error("একটি সঠিক ইমেইল ঠিকানা দিন।");
       return;
     }

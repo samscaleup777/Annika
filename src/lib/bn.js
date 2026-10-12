@@ -54,23 +54,26 @@ export function formatChange(pct) {
   return toBn(abs);
 }
 
-// Bengali date — FIXED for server-side rendering
+// Bengali date — always use Bangladesh's local date, not the deployment server's timezone.
 const BANGLA_MONTHS = [
   "জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল",
   "মে", "জুন", "জুলাই", "আগস্ট",
   "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর",
 ];
 
-// Static Bengali date (server-safe) — used in layout/navbar
 export function todayBn() {
-  return "১০ অক্টোবর, ২০২৬";
+  const parts = new Intl.DateTimeFormat("bn-BD", {
+    timeZone: "Asia/Dhaka",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).formatToParts(new Date());
+
+  const part = (type) => parts.find((item) => item.type === type)?.value || "";
+  return `${part("day")} ${part("month")}, ${part("year")}`;
 }
 
-// For client-side dynamic date if needed
+// Client-side helper retained for existing imports.
 export function dynamicTodayBn() {
-  const now = new Date();
-  const day = toBn(now.getDate());
-  const month = BANGLA_MONTHS[now.getMonth()];
-  const year = toBn(now.getFullYear());
-  return `${day} ${month}, ${year}`;
+  return todayBn();
 }
